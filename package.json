@@ -16,5 +16,16 @@
   "bugs": {
     "url": "https://github.com/Jochern/chicken_flap/issues"
   },
-  "homepage": "https://github.com/Jochern/chicken_flap#readme"
+  "homepage": "https://github.com/Jochern/chicken_flap#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.3",
+    "pi-camera-connect": "^0.3.4",
+    "ws": "^8.5.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.13",
+    "@types/ws": "^8.2.2"
+  }
 }
