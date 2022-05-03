@@ -19,6 +19,7 @@
   "homepage": "https://github.com/Jochern/chicken_flap#readme",
   "dependencies": {
     "@types/node-schedule": "^2.1.0",
+    "body-parser": "^1.19.2",
     "cors": "^2.8.5",
     "express": "^4.17.3",
     "node-schedule": "^2.1.0",

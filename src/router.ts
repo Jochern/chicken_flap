@@ -59,6 +59,7 @@ router.get('/settings', (req,res) => {
 })
 
 router.post('/settings', (req,res) => {
+    console.log(req.body)
     setAllSettings(req.body).then(() => {
         res.sendStatus(200)
     }).catch(() => {
@@ -67,5 +68,3 @@ router.post('/settings', (req,res) => {
 })
 
 export default router
-
-//TODO: add post route for changeing settting
