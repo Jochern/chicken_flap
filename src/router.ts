@@ -3,7 +3,7 @@ import videoStream from './video/capture';
 import moveDown from './gpio/moveDown';
 import moveUp from './gpio/moveUp';
 import { relaisOn, relaisOff } from './gpio/relais'
-import { getAllSettings } from './settings/settings';
+import { getAllSettings,setAllSettings } from './settings/settings';
 
 
 let router = Router()
@@ -56,6 +56,14 @@ router.get('/relaisOff', (req, res) => {
 
 router.get('/settings', (req,res) => {
     res.json(getAllSettings())
+})
+
+router.post('/settings', (req,res) => {
+    setAllSettings(req.body).then(() => {
+        res.sendStatus(200)
+    }).catch(() => {
+        res.sendStatus(500)
+    })
 })
 
 export default router

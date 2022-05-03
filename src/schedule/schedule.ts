@@ -18,7 +18,7 @@ export function createJob(){
     jobEvening = scheduleJob(`${evening[1]} ${evening[0]} * * *`, moveDown)
 }
 
-function uppdateJob(){
+export function updateJob(){
     let timeSettings = getTimeSettings()
 
     let morning = timeSettings.morning.split(":")
