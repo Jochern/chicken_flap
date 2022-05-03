@@ -5,6 +5,10 @@ import cors from 'cors';
 import router from './src/router';
 import authMiddleware from './src/auth/middleware'
 
+import {createJob} from './src/schedule/schedule'
+
+createJob()
+
 const app = express();
 app.use(cors())
 app.use(authMiddleware)

@@ -18,10 +18,14 @@
   },
   "homepage": "https://github.com/Jochern/chicken_flap#readme",
   "dependencies": {
+    "@types/node-schedule": "^2.1.0",
     "cors": "^2.8.5",
     "express": "^4.17.3",
+    "node-schedule": "^2.1.0",
+    "nodemon": "^2.0.16",
     "onoff": "^6.0.3",
     "raspberry-pi-camera-native": "^0.0.0",
+    "ts-node": "^10.7.0",
     "ws": "^8.5.0"
   },
   "devDependencies": {

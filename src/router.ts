@@ -3,6 +3,8 @@ import videoStream from './video/capture';
 import moveDown from './gpio/moveDown';
 import moveUp from './gpio/moveUp';
 import { relaisOn, relaisOff } from './gpio/relais'
+import { getAllSettings } from './settings/settings';
+
 
 let router = Router()
 
@@ -52,4 +54,10 @@ router.get('/relaisOff', (req, res) => {
         })
 })
 
+router.get('/settings', (req,res) => {
+    res.json(getAllSettings())
+})
+
 export default router
+
+//TODO: add post route for changeing settting
