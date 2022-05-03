@@ -1,25 +1,85 @@
-import { StillCamera, StreamCamera, Codec } from "pi-camera-connect";
+let lastFrameObj = {
+   lastFrame: null
+};
 
-import * as fs from 'fs';
+let videoStream = {
+   getLastFrame: () => {
+       return lastFrameObj.lastFrame;
+   },
+   acceptConnections: function(expressApp, cameraOptions, resourcePath, isVerbose){
+       const raspberryPiCamera = require('raspberry-pi-camera-native');
 
-//testing:
-// export async function captureImage() {  //takes picture and returns path to it
-//      let img = await fs.readFileSync('../assets/test/cropped-ASD_Logo_aktuell_2020.png')
-//      return img;
-//  }
+       if(!cameraOptions){
+           cameraOptions = {
+               width: 1280,
+               height: 720,
+               fps: 16,
+               encoding: 'JPEG',
+               quality: 7
+           };
+       }
 
-//production:
+       // start capture
+       raspberryPiCamera.start(cameraOptions);
+       if(isVerbose) {
+           console.log('Camera started.');
+       }
 
-export async function captureImage() {    //TODO: Start stream on connection and end stream on close
-   const streamCamera = new StreamCamera({
-      codec: Codec.MJPEG
-   });
+       if(typeof resourcePath === 'undefined' || !resourcePath){
+           resourcePath = '/stream.mjpg';
+       }
 
-   await streamCamera.startCapture();
+       expressApp.get(resourcePath, (req, res) => {
 
-   let img = await streamCamera.takeImage()
-  
-   await streamCamera.stopCapture()
+           res.writeHead(200, {
+               'Cache-Control': 'no-store, no-cache, must-revalidate, pre-check=0, post-check=0, max-age=0',
+               Pragma: 'no-cache',
+               Connection: 'close',
+               'Content-Type': 'multipart/x-mixed-replace; boundary=--myboundary'
+           });
+           if(isVerbose)
+               console.log('Accepting connection: '+req.hostname);
 
-   return img;
+           // add frame data event listener
+       
+           let isReady = true;
+       
+           let frameHandler = (frameData) => {
+               try{
+                   if(!isReady){
+                       return;
+                   }
+       
+                   isReady = false;
+       
+                   if(isVerbose)
+                       console.log('Writing frame: '+frameData.length);
+
+                   lastFrameObj.lastFrame = frameData;
+
+                   res.write(`--myboundary\nContent-Type: image/jpg\nContent-length: ${frameData.length}\n\n`);
+                   res.write(frameData, function(){
+                       isReady = true;
+                   });
+       
+       
+               }
+               catch(ex){
+                   if(isVerbose)
+                       console.log('Unable to send frame: '+ex);
+               }
+           }
+       
+           let frameEmitter = raspberryPiCamera.on('frame', frameHandler);
+       
+           req.on('close', ()=>{
+               frameEmitter.removeListener('frame', frameHandler);
+
+               if(isVerbose)
+                   console.log('Connection terminated: '+req.hostname);
+           });
+       });
+   }
 }
+
+export default videoStream
