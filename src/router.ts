@@ -3,14 +3,17 @@ import videoStream from './video/capture';
 import moveDown from './gpio/moveDown';
 import moveUp from './gpio/moveUp';
 import { relaisOn, relaisOff } from './gpio/relais'
+import authMiddleware from './auth/middleware'
 import { getAllSettings,setAllSettings } from './settings/settings';
 
 
 let router = Router()
 
+//router.use(authMiddleware)
+
 videoStream.acceptConnections(router, {
-    width: 400,
-    height: 400,
+    width: 1024,
+    height: 768,
     fps: 7,
     encoding: 'JPEG',
     quality: 5 //lower is faster
@@ -59,7 +62,6 @@ router.get('/settings', (req,res) => {
 })
 
 router.post('/settings', (req,res) => {
-    console.log(req.body)
     setAllSettings(req.body).then(() => {
         res.sendStatus(200)
     }).catch(() => {
