@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import videoStream from './video/capture';
-import moveDown from './gpio/moveDown';
+import moveDown, { getState } from './gpio/moveDown';
 import moveUp from './gpio/moveUp';
-import { relaisOn, relaisOff } from './gpio/relais'
+import { relaisOn, relaisOff, getRelaisState } from './gpio/relais'
 import authMiddleware from './auth/middleware'
-import { getAllSettings,setAllSettings } from './settings/settings';
+import { getAllSettings, setAllSettings } from './settings/settings';
 
 
 let router = Router()
@@ -57,16 +57,42 @@ router.get('/relaisOff', (req, res) => {
         })
 })
 
-router.get('/settings', (req,res) => {
+router.get('/settings', (req, res) => {
     res.json(getAllSettings())
 })
 
-router.post('/settings', (req,res) => {
+router.post('/settings', (req, res) => {
     setAllSettings(req.body).then(() => {
         res.sendStatus(200)
     }).catch(() => {
         res.sendStatus(500)
     })
+})
+
+type state = {
+    relais: string | null,
+    position: string | null
+}
+
+router.get('/state', async (req, res) => {
+    let state: state = {
+        relais: null,
+        position: null
+    }
+
+    if (await getRelaisState() == 0) {
+        state.relais = 'on'
+    } else if (await getRelaisState() == 1) {
+        state.relais = 'off'
+    }
+
+    if (getState() === 'true') {
+        state.position = 'down'
+    } else if (getState() === 'false') {
+        state.position = 'up'
+    }
+
+    res.json(state).status(200)
 })
 
 export default router

@@ -42,6 +42,7 @@ app.get('/', (req, res) => {
 })
 
 const decryptString = (s: string) => (Buffer.from(s.slice(6), 'base64').toString('utf-8').slice(0, -1))
+
 app.post('/login', (req, res) => {
     console.log(decryptString(req.headers.authorization))
     if (decryptString(req.headers.authorization) == AUTH_TOKEN) {

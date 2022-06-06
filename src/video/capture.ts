@@ -13,9 +13,9 @@ let videoStream = {
            cameraOptions = {
                width: 1280,
                height: 720,
-               fps: 16,
+               fps: 8,
                encoding: 'JPEG',
-               quality: 7
+               quality: 5
            };
        }
 
