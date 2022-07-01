@@ -1,5 +1,7 @@
 import { Gpio } from "onoff";
-import * as fs from 'fs'
+import * as fs from 'fs';
+import transporter from '../settings/mail/transporter';
+
 
 let sIn1 = new Gpio(2, 'in', 'both')//has to be configured as INPUT PULLUP
 let sIn2 = new Gpio(3, 'in', 'both')//has to be configured as INPUT PULLUP
@@ -28,8 +30,14 @@ export default function moveDown() {
             mOut2.writeSync(0);
             // console.log('done 2')
             fs.writeFileSync("/home/pi/chicken_flap/src/gpio/state.txt", "true")
+            transporter.sendMail({
+                from: "johannes.kling@outlook.de",
+                to: "rokli@gmx.net",
+                subject: "Hühnerklappe !!!",
+                text: "Die Klappe ist vermutlich nicht bis zum Anschlag geschlossen! Bitte überprüfen."
+            })
             return reject('time elapsed - check for errors')
-        }, 40000);
+        }, 45000);
 
         sIn1.watch((err, val) => {
             if (val === 0) {

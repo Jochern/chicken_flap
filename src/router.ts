@@ -7,6 +7,7 @@ import authMiddleware from './auth/middleware'
 import { getAllSettings, setAllSettings } from './settings/settings';
 
 
+
 let router = Router()
 
 //router.use(authMiddleware)
@@ -21,7 +22,7 @@ videoStream.acceptConnections(router, {
 
 router.get('/moveDown', (req, res) => {
     moveDown()
-        .then((value) => {
+        .then(value => {
             console.log('resolved')
             res.send(value);
         })
