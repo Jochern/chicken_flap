@@ -1,6 +1,8 @@
 import { Gpio } from "onoff";
 import * as fs from 'fs';
 import transporter from '../settings/mail/transporter';
+import log from './log';
+
 
 
 let sIn1 = new Gpio(2, 'in', 'both')//has to be configured as INPUT PULLUP
@@ -9,9 +11,9 @@ let sIn2 = new Gpio(3, 'in', 'both')//has to be configured as INPUT PULLUP
 let mOut1 = new Gpio(5, 'out')
 let mOut2 = new Gpio(6, 'out')
 
-
 export default function moveDown() {
     return new Promise((resolve, reject) => {
+        let start = Date.now()
         mOut1.writeSync(0);
         mOut2.writeSync(0);
 
@@ -36,8 +38,16 @@ export default function moveDown() {
                 subject: "Hühnerklappe !!!",
                 text: "Die Klappe ist vermutlich nicht bis zum Anschlag geschlossen! Bitte überprüfen."
             })
+            transporter.sendMail({
+                from: "johannes.kling@outlook.de",
+                to: "tinebugarkling@gmx.de",
+                subject: "Hühnerklappe !!!",
+                text: "Die Klappe ist vermutlich nicht bis zum Anschlag geschlossen! Bitte überprüfen."
+            })
+            const duration = Date.now() - start;
+            log(duration, false)
             return reject('time elapsed - check for errors')
-        }, 45000);
+        }, 52000);
 
         sIn1.watch((err, val) => {
             if (val === 0) {
@@ -47,6 +57,8 @@ export default function moveDown() {
                 // console.log('done')
                 fs.writeFileSync("/home/pi/chicken_flap/src/gpio/state.txt", "true")
                 sIn1.unwatch()
+                const duration = Date.now() - start;
+                log(duration, true)
                 return resolve('moved down')
             }
         })
